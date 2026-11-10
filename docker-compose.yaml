@@ -1,0 +1,25 @@
+services:
+  mongo:
+    image: mongo:8.0.14-rc1-noble
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    env_file: .env
+    depends_on:
+      - mongo
+    command: ["yarn", "nodemon", "src/index.js"]
+
+
+volumes:
+  mongo_data: 
