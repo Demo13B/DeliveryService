@@ -9,4 +9,9 @@ const create = async (data) => {
     }
 }
 
-module.exports = { create };
+const findByEmail = async (email) => {
+    const user = User.findOne({ email: email });
+    return user;
+}
+
+module.exports = { create, findByEmail };
