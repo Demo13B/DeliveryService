@@ -1,0 +1,7 @@
+{
+  "name": "DeliveryService",
+  "version": "1.0.0",
+  "description": "A backend API for Delivery Service",
+  "main": "index.js",
+  "license": "MIT"
+}
