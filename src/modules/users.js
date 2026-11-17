@@ -5,7 +5,7 @@ const create = async (data) => {
     try {
         return user.save();
     } catch (e) {
-        throw e;
+        console.error(e);
     }
 }
 
