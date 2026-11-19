@@ -1,10 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const session = require('express-session');
 
 const config = require('./config');
+const passport = require('./passport');
 const UserRouter = require('./routers/users');
 
 app = express();
+app.use(session({
+    secret: config.session_secret,
+    resave: false,
+    saveUninitialized: false
+}))
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.json());
 
 app.use('/api', UserRouter);
