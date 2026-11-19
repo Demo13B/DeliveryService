@@ -2,15 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const config = require('./config');
-const UserModule = require('./modules/users');
-
-const user_data = {
-    email: 'email@mail.com',
-    name: 'User',
-    passwordHash: 'qwklj1lk2j31'
-}
+const UserRouter = require('./routers/users');
 
 app = express();
+app.use(express.json());
+
+app.use('/api', UserRouter);
 
 app.get('/', (req, res) => {
     res.send('Hello, World!\n');
