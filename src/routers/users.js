@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 
 const UserModule = require('../modules/users');
 const Validator = require('../validators/users');
+const passport = require('../passport');
 
 const router = express.Router();
 
@@ -43,6 +44,20 @@ router.post('/signup', Validator.signupValidator, async (req, res) => {
             status: 'error'
         })
     }
+});
+
+router.post('/signin', passport.authenticate('local'), (req, res) => {
+    const data = {
+        id: req.user._id,
+        email: req.user.email,
+        name: req.user.name,
+        contactPhone: req.user.contactPhone
+    }
+
+    res.status(201).send({
+        data: data,
+        status: 'ok'
+    });
 });
 
 module.exports = router;

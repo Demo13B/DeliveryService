@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 
 const UserModule = require('./modules/users');
+const User = require('./models/user');
 
 const verify = async (email, password, done) => {
     let user;
