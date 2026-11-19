@@ -1,6 +1,10 @@
+const EventEmitter = require('events');
+
 const Chat = require('../models/chat');
 
-const find = (users) => {
+const emitter = new EventEmitter();
+
+const find = async (users) => {
     return Chat.findOne({ users: { $all: users, $size: 2 } });
 }
 
@@ -25,7 +29,25 @@ const sendMessage = async (data) => {
 
     await chat.save();
 
+    emitter.emit('message', {
+        chatId: chat._id,
+        message: chat.messages[chat.messages.length - 1]
+    });
+
     return chat.messages[chat.messages.length - 1];
 }
 
-module.exports = { find, sendMessage };
+const subscribe = (cb) => {
+    emitter.on('message', (data) => {
+        cb(data);
+    });
+}
+
+const getHistory = async (id) => {
+    const chat = await Chat.findById(id);
+    if (!chat)
+        return null;
+    return chat.messages;
+}
+
+module.exports = { find, sendMessage, subscribe, getHistory };
