@@ -68,6 +68,10 @@ router.get('/:id', idCheck.mongoIdCheck, async (req, res) => {
         res.status(404).send('Advertisement not found');
     }
 
+    if (ad.isDeleted) {
+        res.status(404).send({ error: 'Объявление было удалено', status: 'error' });
+    }
+
     let user;
     try {
         user = await UserModule.findById(ad.userId);
@@ -111,6 +115,33 @@ router.post('/', authMiddleware, fileFetcher.array('images', 10), async (req, re
 
     const ad = await AdvertisementModule.create(data);
     res.redirect(`/api/advertisements/${ad._id}`);
+});
+
+router.delete('/:id', idCheck.mongoIdCheck, authMiddleware, async (req, res) => {
+    let ad;
+    try {
+        ad = await AdvertisementModule.findById(req.params.id);
+        if (ad === null)
+            return res.status(404).send({ error: 'Объявление не найдено', status: 'error' });
+    } catch (e) {
+        console.log(e);
+        res.status(400).send({ error: e, status: 'error' });
+        return;
+    }
+
+    console.log(ad.userId.toString(), '    ', req.user._id.toString());
+    if (ad.userId.toString() !== req.user._id.toString())
+        return res.status(403).send({ error: 'Объявление не принадлежит пользователю', status: 'error' });
+
+    try {
+        await AdvertisementModule.remove(req.params.id);
+    } catch (e) {
+        console.log(e);
+        res.status(400).send({ error: e, status: 'error' });
+        return;
+    }
+
+    res.sendStatus(204);
 });
 
 module.exports = router;
