@@ -3,21 +3,26 @@ const Advertisement = require('../models/advertisement');
 const find = (params) => {
     let query = { isDeleted: false };
 
-    if (params.shortText) {
+    if ('shortText' in params) {
         query.shortText = { $regex: params.shortText };
     }
-    if (params.description) {
+    if ('description' in params) {
         query.description = { $regex: params.description };
     }
-    if (params.userId) {
+    if ('userId' in params) {
         query.userId = params.userId
     }
-    if (params.tags) {
+    if ('tags' in params) {
         query.tags = { $all: params.tags }
     }
 
     const res = Advertisement.find(query);
     return res;
+}
+
+const findById = (id) => {
+    const ad = Advertisement.findById(id);
+    return ad;
 }
 
 const create = (data) => {
@@ -43,4 +48,4 @@ const remove = async (id) => {
     }
 }
 
-module.exports = { find, create, remove }
+module.exports = { find, findById, create, remove }

@@ -5,6 +5,7 @@ const session = require('express-session');
 const config = require('./config');
 const passport = require('./passport');
 const UserRouter = require('./routers/users');
+const AdvertisementRouter = require('./routers/advetisements');
 
 app = express();
 app.use(session({
@@ -17,6 +18,7 @@ app.use(passport.session());
 
 app.use(express.json());
 
+app.use('/api/advertisements', AdvertisementRouter);
 app.use('/api', UserRouter);
 
 app.get('/', (req, res) => {
