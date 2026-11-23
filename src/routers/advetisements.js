@@ -12,8 +12,8 @@ router.get('/', async (req, res) => {
     let ads;
     try {
         const params = {};
-        if (req.query.shortText)
-            params.shortText = req.query.shortText;
+        if (req.query.shortTitle)
+            params.shortTitle = req.query.shortTitle;
         if (req.query.description)
             params.description = req.query.description;
         if (req.query.userId)
@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
 
         ads = await AdvertisementModule.find(params);
     } catch (e) {
-        console.log(e);
+        console.error(e);
         res.status(400).send({ error: e, status: 'error' });
         return;
     }
@@ -34,13 +34,13 @@ router.get('/', async (req, res) => {
         try {
             user = await UserModule.findById(ad.userId);
         } catch (e) {
-            console.log(e);
+            console.error(e);
             res.status(400).send({ error: e, status: 'error' });
             return;
         }
         data.push({
             id: ad._id,
-            shortTitle: ad.shortText,
+            shortTitle: ad.shortTitle,
             description: ad.description,
             images: ad.images,
             user: {
@@ -59,7 +59,7 @@ router.get('/:id', idCheck.mongoIdCheck, async (req, res) => {
     try {
         ad = await AdvertisementModule.findById(req.params.id);
     } catch (e) {
-        console.log(e);
+        console.error(e);
         res.status(400).send({ error: e, status: 'error' });
         return;
     }
@@ -76,13 +76,13 @@ router.get('/:id', idCheck.mongoIdCheck, async (req, res) => {
     try {
         user = await UserModule.findById(ad.userId);
     } catch (e) {
-        console.log(e);
+        console.error(e);
         res.status(400).send({ error: e, status: 'error' });
         return;
     }
     data = {
         id: ad._id,
-        shortTitle: ad.shortText,
+        shortTitle: ad.shortTitle,
         description: ad.description,
         images: ad.images,
         user: {
@@ -103,7 +103,7 @@ router.post('/', authMiddleware, fileFetcher.array('images', 10), async (req, re
     const images = req.files.map(file => file.path);
 
     const data = {
-        shortText: req.body.shortTitle,
+        shortTitle: req.body.shortTitle,
         description: req.body.description,
         images,
         userId: req.user._id,
@@ -124,19 +124,18 @@ router.delete('/:id', idCheck.mongoIdCheck, authMiddleware, async (req, res) => 
         if (ad === null)
             return res.status(404).send({ error: 'Объявление не найдено', status: 'error' });
     } catch (e) {
-        console.log(e);
+        console.error(e);
         res.status(400).send({ error: e, status: 'error' });
         return;
     }
 
-    console.log(ad.userId.toString(), '    ', req.user._id.toString());
     if (ad.userId.toString() !== req.user._id.toString())
         return res.status(403).send({ error: 'Объявление не принадлежит пользователю', status: 'error' });
 
     try {
         await AdvertisementModule.remove(req.params.id);
     } catch (e) {
-        console.log(e);
+        console.error(e);
         res.status(400).send({ error: e, status: 'error' });
         return;
     }

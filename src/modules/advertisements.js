@@ -3,8 +3,8 @@ const Advertisement = require('../models/advertisement');
 const find = (params) => {
     let query = { isDeleted: false };
 
-    if ('shortText' in params) {
-        query.shortText = { $regex: params.shortText };
+    if ('shortTitle' in params) {
+        query.shortTitle = { $regex: params.shortTitle };
     }
     if ('description' in params) {
         query.description = { $regex: params.description };

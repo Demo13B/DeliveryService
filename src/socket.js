@@ -22,13 +22,13 @@ async function createSocket(server) {
     ChatModule.subscribe((data) => {
         const { chatId, message } = data;
 
-        io.to(chatId).emit('newMessage', message);
+        io.to(chatId.toString()).emit('newMessage', message);
     });
 
 
     io.on('connection', (socket) => {
         socket.on('getHistory', async (data) => {
-            const users = [socket.request.user._id.toString(), data.userId.toString()];
+            const users = [socket.request.user._id.toString(), data.userId];
             let chat;
             try {
                 chat = await ChatModule.find(users);

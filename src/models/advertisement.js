@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const advertisementSchema = new Schema({
-    shortText: {
+    shortTitle: {
         type: String,
         required: true
     },
