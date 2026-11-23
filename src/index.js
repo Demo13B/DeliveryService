@@ -1,18 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const session = require('express-session');
+const http = require('http');
 
 const config = require('./config');
 const passport = require('./passport');
+const session = require('./middleware/session');
 const UserRouter = require('./routers/users');
 const AdvertisementRouter = require('./routers/advetisements');
+const createSocket = require('./socket');
 
 app = express();
-app.use(session({
-    secret: config.session_secret,
-    resave: false,
-    saveUninitialized: false
-}))
+app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -28,7 +26,9 @@ app.get('/', (req, res) => {
 const start = async (port, mongo_url) => {
     await mongoose.connect(mongo_url);
     console.log('Mongo connected');
-    app.listen(port);
+    const server = http.createServer(app);
+    createSocket(server);
+    server.listen(port);
     console.log(`App listening on port: ${port}`);
 }
 
