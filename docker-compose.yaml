@@ -12,14 +12,12 @@ services:
     build: .
     restart: unless-stopped
     volumes:
-      - .:/app
       - uploaded_images:/uploads
     ports:
       - ${APP_PORT}:${APP_PORT}
     env_file: .env
     depends_on:
       - mongo
-    command: ["yarn", "nodemon", "src/index.js"]
 
 
 volumes:
